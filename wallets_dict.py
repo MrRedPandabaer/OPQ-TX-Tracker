@@ -81,5 +81,9 @@ wallets = {
     "0x4b1a99467a284cc690e3237bc69105956816f762": "Bitmax 2",
     "0x0d6b5a54f940bf3d52e438cab785981aaefdf40c": "Coss.io",
     "0x70faa28a6b8d6829a4b1e649d26ec9a2a39ba413": "ShapeShift",
-    "0xde0b295669a9fd93d5f28d9ec85e40f4cb697bae": "Ethereum Foundation"
+    "0xde0b295669a9fd93d5f28d9ec85e40f4cb697bae": "Ethereum Foundation",
+    "0x47db829f846aF3835526727028d8436a67e4c9e2": "Dev Wallet"
+
+
+
 }
