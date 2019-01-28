@@ -38,8 +38,8 @@ def get_OPQ_prices():
 
 # defining standard telegram message
 def send(chat_id, token):
-    #OPQinBTC, OPQinETH, OPQinUSD = get_OPQ_prices()
-    #OPQinSat = OPQinBTC * 100000000
+    OPQinBTC, OPQinETH, OPQinUSD = get_OPQ_prices()
+    OPQinSat = OPQinBTC * 100000000
     time = datetime.utcfromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S')
     tx_link = "https://etherscan.io/tx/" + hash
     amount_project = amount + " " + project
@@ -55,12 +55,12 @@ def send(chat_id, token):
                           "-" * len(time) + "\n" + "[Transaction Hash](" + tx_link + ")\n\n" + \
                           "*" + amount_project + "* in Block [" + block + "](" + block_link + ")\n\n" + \
                           "_From_ : [" + walletname_from + "](" + from_link + ")\n" + \
-                          "_To_ : [" + walletname_to + "](" + to_link + ")\n\n",)# + \
-                          #"*Value transfered*\n" + \
-                          #"----------------\n" + \
-                          #"ETH: " + str(OPQinETH) + "\n" + \
-                          #"Sats: " + str(round(OPQinSat)) + "\n" + \
-                          #"USD: " + str(OPQinUSD), )
+                          "_To_ : [" + walletname_to + "](" + to_link + ")\n\n" + \
+                          "*Value transfered*\n" + \
+                          "----------------\n" + \
+                          "ETH: " + str(OPQinETH) + "\n" + \
+                          "Sats: " + str(round(OPQinSat)) + "\n" + \
+                          "USD: " + str(OPQinUSD), )
 
 
 def update_chat_ids():
@@ -73,6 +73,23 @@ def update_chat_ids():
             pass
         chat_ids = []
     return chat_ids
+
+def request_chat_ids():
+    bot_up = requests.get(bot_update)
+    bot_content = bot_up.json()
+    bot_results = bot_content.get("result")
+
+    for n, update in enumerate(bot_results):
+        chat_ids = update_chat_ids()
+        # print(update.get("message"))
+        buffer = update.get("message")
+        chat = buffer.get("chat")
+        chat = chat.get("id")
+        if str(chat) not in chat_ids:
+            with open("chat_IDs.txt", "a+") as f:
+                f.write(str(chat) + "\n")
+
+
 
 
 # input for requests
@@ -90,31 +107,25 @@ except:
     print("New file created for verifying transactions\n")
 
 # loop per looptime
+
 while True:
-    print("Loop")
 
     try:
         response = requests.get(url)
         address_content = response.json()
         result = address_content.get("result")
 
-        bot_up = requests.get(bot_update)
-        bot_content = bot_up.json()
-        bot_results = bot_content.get("result")
-
-        for n, update in enumerate(bot_results):
-            chat_ids = update_chat_ids()
-            # print(update.get("message"))
-            buffer = update.get("message")
-            chat = buffer.get("chat")
-            chat = chat.get("id")
-            if str(chat) not in chat_ids:
-                with open("chat_IDs.txt", "a+") as f:
-                    f.write(str(chat) + "\n")
+        request_chat_ids()
 
     except:
         print("Request error. Waiting 10 seconds.\n" + str(datetime.now()))
         time.sleep(10)
+        continue
+
+    chat_ids = update_chat_ids()
+    print(chat_ids)
+
+    if len(chat_ids) == 0:
         continue
 
     # retrieve blockchain information
@@ -148,25 +159,22 @@ while True:
         if hash not in read_data:
 
             if int(value_raw) > limit:
-                print("Transaction ID: ", n)
-                print("hash: ", hash)
-                print("from: ", tx_from)
-                print("to: ", tx_to)
-                print("value: ", value)
-                print("block: ", block)
-                print(str(datetime.now()))
-                print("\n")
+                #print("Transaction ID: ", n)
+                #print("hash: ", hash)
+                #print("from: ", tx_from)
+                #print("to: ", tx_to)
+                #print("value: ", value)
+                #print("block: ", block)
+                #print(str(datetime.now()))
+                #print("\n")
                 try:
                     for chat_id in chat_ids:
                         if chat_id != "":
                             try:
                                 send(chat_id, my_token)
+                                print("Send message to chat_id: {}\n".format(chat_id))
                             except:
                                 print("Error while printing to chat_id: {}\n".format(chat_id))
-                                chat_ids.remove(chat_id)
-                                with open("chat_IDs.txt","w") as fh:
-                                    for x in chat_ids:
-                                        fh.write(x+"\n")
 
                     f = open("" + filename + ".txt", "a+")
                     out = ";".join([str(block), str(timestamp), str(hash), str(amount)])
