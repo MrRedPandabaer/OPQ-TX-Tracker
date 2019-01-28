@@ -38,8 +38,8 @@ def get_OPQ_prices():
 
 # defining standard telegram message
 def send(chat_id, token):
-    OPQinBTC, OPQinETH, OPQinUSD = get_OPQ_prices()
-    OPQinSat = OPQinBTC * 100000000
+    #OPQinBTC, OPQinETH, OPQinUSD = get_OPQ_prices()
+    #OPQinSat = OPQinBTC * 100000000
     time = datetime.utcfromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S')
     tx_link = "https://etherscan.io/tx/" + hash
     amount_project = amount + " " + project
@@ -55,12 +55,12 @@ def send(chat_id, token):
                           "-" * len(time) + "\n" + "[Transaction Hash](" + tx_link + ")\n\n" + \
                           "*" + amount_project + "* in Block [" + block + "](" + block_link + ")\n\n" + \
                           "_From_ : [" + walletname_from + "](" + from_link + ")\n" + \
-                          "_To_ : [" + walletname_to + "](" + to_link + ")\n\n" + \
-                          "*Value transfered*\n" + \
-                          "----------------\n" + \
-                          "ETH: " + str(OPQinETH) + "\n" + \
-                          "Sats: " + str(round(OPQinSat)) + "\n" + \
-                          "USD: " + str(OPQinUSD), )
+                          "_To_ : [" + walletname_to + "](" + to_link + ")\n\n",)# + \
+                          #"*Value transfered*\n" + \
+                          #"----------------\n" + \
+                          #"ETH: " + str(OPQinETH) + "\n" + \
+                          #"Sats: " + str(round(OPQinSat)) + "\n" + \
+                          #"USD: " + str(OPQinUSD), )
 
 
 def update_chat_ids():
